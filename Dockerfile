@@ -2,23 +2,24 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# System dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first (better caching)
-COPY requirements.txt .
-
-# Upgrade pip and install Python dependencies
+# Upgrade pip tools
 RUN pip install --upgrade pip setuptools wheel
+
+# Install NumPy FIRST (critical)
+RUN pip install numpy==1.23.5
+
+# Copy requirements and install rest
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copy rest of the backend code
+# Copy application code
 COPY . .
 
-# Expose Render port
 EXPOSE 10000
 
-# Start FastAPI app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
