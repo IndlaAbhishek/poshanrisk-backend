@@ -3,7 +3,8 @@ uvicorn
 pydantic
 numpy
 pandas
-scikit-learn
+scikit-learn==1.2.2
 joblib
 tensorflow
 xgboost
+
