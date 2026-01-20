@@ -1,0 +1,14 @@
+{
+  "description": "ANN + XGBoost hybrid soft voting for malnutrition risk prediction",
+  "ann_weight": 0.65,
+  "xgb_weight": 0.35,
+  "ann_role": "calibrated probabilistic estimator",
+  "xgb_role": "rule-based classifier",
+  "decision_type": "soft_voting",
+  "final_classes": [
+    "High",
+    "Low",
+    "Medium",
+    "Normal"
+  ]
+}

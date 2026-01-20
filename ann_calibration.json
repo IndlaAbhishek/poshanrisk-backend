@@ -1,0 +1,13 @@
+{
+  "severity_weights": {
+    "Normal": 0,
+    "Low": 1,
+    "Medium": 2,
+    "High": 3
+  },
+  "severity_thresholds": {
+    "Normal": 0.6,
+    "Low": 1.5,
+    "Medium": 2.3
+  }
+}
