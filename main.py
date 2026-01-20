@@ -8,6 +8,28 @@ from pydantic import BaseModel
 from tensorflow.keras.models import load_model
 
 # =========================
+# LAZY MODEL LOADER (CLOUD SAFE)
+# =========================
+preprocessor = None
+ann_model = None
+xgb_model = None
+
+def load_models():
+    global preprocessor, ann_model, xgb_model
+
+    if preprocessor is None:
+        preprocessor = joblib.load("preprocessor_locked.pkl")
+
+    if ann_model is None:
+        ann_model = load_model("ann_locked_model.h5", compile=False)
+
+    if xgb_model is None:
+        booster = xgb.Booster()
+        booster.load_model("xgb_locked_model.json")
+        xgb_model = booster
+
+
+# =========================
 # FASTAPI APP
 # =========================
 app = FastAPI(title="Malnutrition Risk Predictor (Hybrid)")
@@ -61,12 +83,12 @@ REF = {
 # =========================
 # LOAD MODELS & CONFIG
 # =========================
-preprocessor = joblib.load("preprocessor_locked.pkl")
+#preprocessor = joblib.load("preprocessor_locked.pkl")
 
-ann_model = load_model("ann_locked_model.h5", compile=False)
+#ann_model = load_model("ann_locked_model.h5", compile=False)
 
-xgb_model = xgb.Booster()
-xgb_model.load_model("xgb_locked_model.json")
+#xgb_model = xgb.Booster()
+#xgb_model.load_model("xgb_locked_model.json")
 
 with open("ann_calibration.json") as f:
     ANN_CALIB = json.load(f)
@@ -114,6 +136,8 @@ def home():
 
 @app.post("/predict")
 def predict(data: PatientInput):
+
+    load_models()   # 🔑 CRITICAL LINE
 
     # -------------------------
     # CATEGORICAL → NUMERIC
